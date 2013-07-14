@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <meta charset="UTF-8">
+        <title>Congressional Words</title>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+
+        <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+</head>
+<body>
+I need to label these axes.
+lines and text with d3, or pure svg
+<script type="text/javascript">
+
+$(function(){
+data="";
+sunlightJsonp=function(d){
+  data=d;
+};
+$.ajax("http://198.58.100.162/jsonp/kirk.php", {dataType:"jsonp" ,callback:"sunlightJsonp"});
+d3.select("body")
+.append("svg")
+.attr("width",400)
+.attr("height",200);
+var doD3=function(){
+
+var d=d3.select("svg").selectAll("rect");
+d.data(data)
+.enter()
+.append("rect")
+.attr("height",function(d){return(2)})
+.attr("width",2)
+.attr("fillColor","red")
+.attr("x",function(d,i){return(d.ngram.length*10-180)})
+.attr("y",function(d,i){return(d.count*1.8)});
+};
+
+doD3();
+setTimeout(doD3,3500);
+});
+</script>
+<style>
+rect{
+  fill:none;
+  stroke:black;
+  stroke-width: 1;
+  
+}
+
+rect:hover{
+  fill: none;
+  stroke: blue;
+  stroke-width:3;
+}
+
+</style>
+
+</body>
+</html>
