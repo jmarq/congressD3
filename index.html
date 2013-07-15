@@ -3,35 +3,70 @@
 <head>
         <meta charset="UTF-8">
         <title>Congressional Words</title>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+
         <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 </head>
 <body>
-<h2>right now this is just D3 practice, sunlight coming later</h2>
+I need to label these axes.
+lines and text with d3, or pure svg
+<p id="phraseInfo"></p>
 <script type="text/javascript">
-data=[100,50,60,130];
+
+$(function(){
+data="";
+sunlightJsonp=function(d){
+  data=d;
+};
+$.ajax("http://198.58.100.162/jsonp/kirk.php", {dataType:"jsonp" ,callback:"sunlightJsonp"});
 d3.select("body")
 .append("svg")
-.attr("width",800)
-.attr("height",300);
+.attr("width",400)
+.attr("height",200);
+var phraseDiv=$("#phraseInfo");
+var hover=function(d,i){
+  phraseDiv.html(d.ngram+" "+d.count);
+};
 var doD3=function(){
 
-var d=d3.select("svg").selectAll("rect");
-d.data(data)
+var d=d3.select("svg").selectAll("circle");
+d=d.data(data)
 .enter()
-.append("rect")
-.attr("height",function(d){return(d)})
-.attr("width",10)
-.attr("fillColor","red")
-.attr("x",function(d,i){return(i*10)})
-.attr("y",function(d,i){return(300-d)});
-};
-doD3();
-setInterval(function(){data.push(Math.random()*300); doD3();},500)
-</script>
+.append("circle")
+.attr("r",function(d){return(5)})
+.attr("r",5)
+.attr("fillColor","none")
+.attr("cx",function(d,i){return(d.ngram.length*20-360)})
+.attr("cy",function(d,i){return(200-d.count*5)})
+.on("mouseenter",hover);
+return(d);
 
+};
+var init= function(){
+d3session=doD3();
+}
+var updateD3=function(){
+  d3session.transition();
+};
+
+setTimeout(init,1000);
+});
+</script>
+<style>
+circle{
+  fill:none;
+  stroke:black;
+  stroke-width: 1;
+  
+}
+
+circle:hover{
+  fill: none;
+  stroke: blue;
+  stroke-width:3;
+}
+
+</style>
 
 </body>
 </html>
-~                                                                                       
-~                                                                                       
-~                                     
