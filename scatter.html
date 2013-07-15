@@ -10,6 +10,7 @@
 <body>
 I need to label these axes.
 lines and text with d3, or pure svg
+<p id="phraseInfo"></p>
 <script type="text/javascript">
 
 $(function(){
@@ -22,32 +23,44 @@ d3.select("body")
 .append("svg")
 .attr("width",400)
 .attr("height",200);
+var phraseDiv=$("#phraseInfo");
+var hover=function(d,i){
+  phraseDiv.html(d.ngram+" "+d.count);
+};
 var doD3=function(){
 
-var d=d3.select("svg").selectAll("rect");
-d.data(data)
+var d=d3.select("svg").selectAll("circle");
+d=d.data(data)
 .enter()
-.append("rect")
-.attr("height",function(d){return(2)})
-.attr("width",2)
-.attr("fillColor","red")
-.attr("x",function(d,i){return(d.ngram.length*10-180)})
-.attr("y",function(d,i){return(d.count*1.8)});
+.append("circle")
+.attr("r",function(d){return(5)})
+.attr("r",5)
+.attr("fillColor","none")
+.attr("cx",function(d,i){return(d.ngram.length*20-360)})
+.attr("cy",function(d,i){return(200-d.count*5)})
+.on("mouseenter",hover);
+return(d);
+
+};
+var init= function(){
+d3session=doD3();
+}
+var updateD3=function(){
+  d3session.transition();
 };
 
-doD3();
-setTimeout(doD3,3500);
+setTimeout(init,1000);
 });
 </script>
 <style>
-rect{
+circle{
   fill:none;
   stroke:black;
   stroke-width: 1;
   
 }
 
-rect:hover{
+circle:hover{
   fill: none;
   stroke: blue;
   stroke-width:3;
