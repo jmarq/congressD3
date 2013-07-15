@@ -15,35 +15,36 @@ lines and text with d3, or pure svg
 
 $(function(){
 data="";
+d3session="";
 sunlightJsonp=function(d){
   if(data==""){
   data=d;
   }
   else{data=data.concat(d);}
   maxCount=Math.max.apply(Math,data.map(function(o){return o.count;}));
-  doD3();
+  d3session= doD3();
 };
 
-$.ajax("http://198.58.100.162/jsonp/sunlight.php", {dataType:"jsonp" ,callback:"sunlightJsonp"});
+$.ajax("http://198.58.100.162/jsonp/kirk.php", {dataType:"jsonp" ,callback:"sunlightJsonp"});
 
 var phraseDiv=$("#phraseInfo");
 var hover=function(d,i){
   phraseDiv.html(d.ngram+" "+d.count);
 };
-var doD3=function(){
+ doD3=function(){
+  
+  var d=d3.select("svg").attr("height",maxCount*2).selectAll("circle").data(data);
 
-var d=d3.select("svg").attr("height",maxCount*2).selectAll("circle");
-d=d.data(data)
-.enter()
-.append("circle")
-.attr("r",function(d){return(5)})
-.attr("r",5)
-.attr("fillColor","none")
-.attr("cx",function(d,i){return(d.ngram.length*20-360)})
-.attr("cy",function(d,i){return(maxCount*2-d.count*2)})
-.on("mouseenter",hover);
-return(d);
-
+  d.enter()
+  .append("circle")
+  .attr("r",function(d){return(5)})
+  .attr("r",5)
+  .attr("fillColor","none")
+  .attr("cx",function(d,i){return(d.ngram.length*20-360)})
+  .attr("cy",function(d,i){return(maxCount*2-d.count*2)});
+  d.exit().remove();
+  d.on("mouseenter",hover);
+  return(d);
 };
 var init= function(){
   d3.select("body")
@@ -51,13 +52,12 @@ var init= function(){
   .attr("width",400)
   .attr("height",400);
 
-  d3session=doD3();
 }
 
 setTimeout(init,1000);
 
 var kirk=function(){
-  $.ajax("http://198.58.100.162/jsonp/kirk.php", {dataType:"jsonp" ,callback:"sunlightJsonp"});
+  $.ajax("http://198.58.100.162/jsonp/sunlight.php", {dataType:"jsonp" ,callback:"sunlightJsonp"});
 
 }
 setTimeout(kirk,2000);
