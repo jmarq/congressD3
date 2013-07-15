@@ -16,20 +16,23 @@ lines and text with d3, or pure svg
 $(function(){
 data="";
 sunlightJsonp=function(d){
+  if(data==""){
   data=d;
+  }
+  else{data=data.concat(d);}
+  maxCount=Math.max.apply(Math,data.map(function(o){return o.count;}));
+  doD3();
 };
-$.ajax("http://198.58.100.162/jsonp/kirk.php", {dataType:"jsonp" ,callback:"sunlightJsonp"});
-d3.select("body")
-.append("svg")
-.attr("width",400)
-.attr("height",200);
+
+$.ajax("http://198.58.100.162/jsonp/sunlight.php", {dataType:"jsonp" ,callback:"sunlightJsonp"});
+
 var phraseDiv=$("#phraseInfo");
 var hover=function(d,i){
   phraseDiv.html(d.ngram+" "+d.count);
 };
 var doD3=function(){
 
-var d=d3.select("svg").selectAll("circle");
+var d=d3.select("svg").attr("height",maxCount*2).selectAll("circle");
 d=d.data(data)
 .enter()
 .append("circle")
@@ -37,32 +40,46 @@ d=d.data(data)
 .attr("r",5)
 .attr("fillColor","none")
 .attr("cx",function(d,i){return(d.ngram.length*20-360)})
-.attr("cy",function(d,i){return(200-d.count*5)})
+.attr("cy",function(d,i){return(maxCount*2-d.count*2)})
 .on("mouseenter",hover);
 return(d);
 
 };
 var init= function(){
-d3session=doD3();
+  d3.select("body")
+  .append("svg")
+  .attr("width",400)
+  .attr("height",400);
+
+  d3session=doD3();
 }
-var updateD3=function(){
-  d3session.transition();
-};
 
 setTimeout(init,1000);
+
+var kirk=function(){
+  $.ajax("http://198.58.100.162/jsonp/kirk.php", {dataType:"jsonp" ,callback:"sunlightJsonp"});
+
+}
+setTimeout(kirk,2000);
+
 });
 </script>
 <style>
+svg{
+  border:3px solid black;
+}
 circle{
   fill:none;
+  fill:rgba(0,0,0,0);
   stroke:black;
+  stroke:rgba(0,0,0,0.5);
   stroke-width: 1;
   
 }
 
 circle:hover{
-  fill: none;
-  stroke: blue;
+  fill: orange;
+  stroke: #8ac;
   stroke-width:3;
 }
 
