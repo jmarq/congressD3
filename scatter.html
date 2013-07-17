@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
         <title>Congressional Words</title>
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-
+	<script src="legislators.js"></script>
         <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 </head>
 <body>
@@ -12,21 +12,35 @@ I need to label these axes.
 lines and text with d3, or pure svg
 <p id="phraseInfo"></p>
 <script type="text/javascript">
-
 $(function(){
+ids=new Array();
+legislators=results.results;
+for(l in legislators){
+  ids.push(legislators[l].bioguide_id);
+}
 data="";
 d3session="";
 sunlightJsonp=function(d){
+  console.log(d);
+  console.log("sunlight handler");
   if(data==""){
   data=d;
   }
   else{data=data.concat(d);}
   maxCount=Math.max.apply(Math,data.map(function(o){return o.count;}));
+  d3.selectAll("circle").remove();
   d3session= doD3();
 };
 
 $.ajax("http://198.58.100.162/jsonp/kirk.php", {dataType:"jsonp" ,callback:"sunlightJsonp"});
 
+legislatorCall=function(bioId){
+  $.ajax({
+callback:"sunlightJsonp", url: "http://198.58.100.162/jsonp/sunlight.php",
+  type: "GET",
+  data: {bioId : bioId},
+  dataType: "jsonp"});
+};
 var phraseDiv=$("#phraseInfo");
 var hover=function(d,i){
   phraseDiv.html(d.ngram+" "+d.count);
@@ -43,6 +57,7 @@ var hover=function(d,i){
   .attr("cx",function(d,i){return(d.ngram.length*20-360)})
   .attr("cy",function(d,i){return(maxCount*2-d.count*2)});
   d.exit().remove();
+  d.transition();
   d.on("mouseenter",hover);
   return(d);
 };
@@ -61,6 +76,11 @@ var kirk=function(){
 
 }
 setTimeout(kirk,2000);
+setTimeout(function(){
+  for(id in ids){
+    legislatorCall(ids[id]);
+  }
+},3000);
 
 });
 </script>
