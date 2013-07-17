@@ -10,6 +10,7 @@
 <body>
 I need to label these axes.
 lines and text with d3, or pure svg
+<input id="codeText" type="text"></input><button id="addButton">add legislator by bioguide id</button>
 <p id="phraseInfo"></p>
 <script type="text/javascript">
 $(function(){
@@ -70,7 +71,7 @@ var init= function(){
 }
 
 setTimeout(init,1000);
-
+$("#addButton").click(function(e){legislatorCall($("#codeText").val())});
 var kirk=function(){
   $.ajax("http://198.58.100.162/jsonp/sunlight.php", {dataType:"jsonp" ,callback:"sunlightJsonp"});
 
